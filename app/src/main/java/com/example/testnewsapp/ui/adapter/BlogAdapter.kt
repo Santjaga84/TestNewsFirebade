@@ -1,5 +1,6 @@
 package com.example.testnewsapp.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +16,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class BlogAdapter(): RecyclerView.Adapter<BlogAdapter.ViewHolder>() {
+class BlogAdapter: RecyclerView.Adapter<BlogAdapter.ViewHolder>() {
 
+    var onItemClickListenerBlog: OnBlogItemClickListener? = null
 
+    fun setBlogPosts(blogPosts: List<BlogPost>) {
+        differ.submitList(blogPosts)
+
+    }
 
     private val callback = object : DiffUtil.ItemCallback<BlogPost>(){
         override fun areItemsTheSame(oldItem: BlogPost, newItem: BlogPost): Boolean {
@@ -37,15 +43,7 @@ class BlogAdapter(): RecyclerView.Adapter<BlogAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val model = modelList[position]
-//        holder.textName.text = model.name
-//        holder.textDescription.text = model.description
-//
-//
-//        // Загрузка изображения с использованием библиотеки Glide или Picasso
-//         Glide.with(holder.imageView.context).load(model.imageUrl).into(holder.imageView)
 
-        //val blog = modelList[position]
         val blog = differ.currentList[position]
         holder.itemView.apply {
             Glide.with(this).load(blog.image).into(holder.imageView)
@@ -55,7 +53,7 @@ class BlogAdapter(): RecyclerView.Adapter<BlogAdapter.ViewHolder>() {
             holder.textDate.text = getCurrentDate() // Установка текущей даты
 
             setOnClickListener {
-                onItemClickListener?.let { it(blog)}
+                onItemClickListenerBlog?.onBlogItemClick(blog)
             }
         }
     }
@@ -76,10 +74,7 @@ class BlogAdapter(): RecyclerView.Adapter<BlogAdapter.ViewHolder>() {
         val textDate: TextView = itemView.findViewById(R.id.tvData)
     }
 
-    private var onItemClickListener: ((BlogPost) -> Unit)? = null
-
-    fun setOnItemClickListener(listener: (BlogPost) -> Unit){
-        onItemClickListener = listener
-    }
-
+}
+    interface OnBlogItemClickListener {
+        fun onBlogItemClick(blogPost: BlogPost)
 }

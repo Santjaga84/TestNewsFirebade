@@ -49,13 +49,13 @@ class SplashFragment : Fragment() {
                     navigateToNextFragment()
                 }
 
-                Log.d("MyLog", isDataLoaded.toString())
+
             } else {
                 // Продолжайте отображать прогрессбар, так как данные еще не загружены
                 mBinding.progressBar.visibility = View.VISIBLE
                 // Показать тост с сообщением об ошибке
 
-                Log.d("MyLog", isDataLoaded.toString())
+
             }
         })
 
@@ -74,16 +74,6 @@ class SplashFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showErrorDialog() {
-        // Реализуйте отображение диалога или другой механизм предупреждения об ошибке
-        // Например, используйте AlertDialog для отображения сообщения
-        AlertDialog.Builder(requireContext())
-            .setTitle("Error")
-            .setMessage("Failed to load data. Please check your internet connection.")
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .show()
     }
 
     private fun navigateToNextFragment() {

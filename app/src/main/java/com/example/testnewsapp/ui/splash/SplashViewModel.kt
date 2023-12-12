@@ -10,13 +10,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.testnewsapp.model.BlogPost
+import com.example.testnewsapp.model.Category
+import com.example.testnewsapp.repositoriy.FirestoreRepository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class SplashViewModel: ViewModel() {
-
     private val postsLiveData = MutableLiveData<List<BlogPost>>()
     val blogPosts: LiveData<List<BlogPost>> get() = postsLiveData
+
+    private val categoryLiveData = MutableLiveData<List<Category>>()
+    val categoryLD: LiveData<List<Category>> get() = categoryLiveData
 
     private val isDataLoadedLiveData = MutableLiveData<Boolean>()
     val isDataLoaded: LiveData<Boolean> get() = isDataLoadedLiveData
@@ -44,32 +48,50 @@ class SplashViewModel: ViewModel() {
                 .addOnSuccessListener { result ->
                     val blogPosts = mutableListOf<BlogPost>()
 
+                    val categoryLD  = mutableSetOf<Category>()
+
+                    // Добавьте "All" только если список категорий пуст
+                    if (categoryLD.isEmpty()) {
+                        categoryLD.add(Category(id = 0, name = "All"))
+                    }
+
+
                     for (document in result) {
                         // Преобразование данных из документа в модель данных (BlogPost)
                         val blogPost = document.toObject(BlogPost::class.java)
+
                         blogPosts.add(blogPost)
-                        Log.d("MyLog", "${document.id} => ${document.data}")
+
+                        val category = blogPost.category
+                        if (!categoryLD.any { it.id == category.id }) {
+                            categoryLD.add(category)
+                        }
                     }
+
                     postsLiveData.value = blogPosts
                     isDataLoadedLiveData.value = true // Устанавливаем флаг, что данные загружены
-                    Log.d("MyLog", "ok")
+
+                    categoryLiveData.value = categoryLD.toList()
+
                 }
                 .addOnFailureListener { exception ->
                     isDataLoadedLiveData.value = false // Устанавливаем флаг, что данные не загружены
-                    Log.d("MyLog", "get failed with ", exception)
+
                     //Ошибка при загрузке данных, отправляем ошибку в LiveData
                     errorLiveData.value =
                         "Ошибка при загрузке данных. Проверьте подключение к интернету."
                 }
+
+
         } else {
             // Если нет интернет-соединения
             isDataLoadedLiveData.value = false // Устанавливаем флаг, что данные не загружены
             errorLiveData.value = "Отсутствует подключение к интернету"
-            Log.d("MyLog", "No internet connection")
-        }
-      }
 
-//    Co
+        }
+    }
+
+    //    Co
     fun Context.isInternetAvailable(): Boolean {
         val connectivityManager =
             ContextCompat.getSystemService(this, ConnectivityManager::class.java)
@@ -86,7 +108,4 @@ class SplashViewModel: ViewModel() {
     }
 
 
-    companion object {
-        private const val TAG = "SplashViewModel"
-    }
 }
