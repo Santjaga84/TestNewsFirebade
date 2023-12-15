@@ -1,23 +1,27 @@
 package com.example.testnewsapp.model
 
+
 import com.google.firebase.firestore.PropertyName
+import java.io.Serializable
 
 data class BlogPost(
-    @PropertyName("id")
+    //@PropertyName("id")
     val id: Int = 0,
 
-    @PropertyName("category")
+    //@PropertyName("category")
     val category: Category = Category(),
 
-    @PropertyName("title")
+    //@PropertyName("title")
     val title: String = "",
 
-    @PropertyName("content")
+    //@PropertyName("content")
     val content: String = "",
 
-    @PropertyName("image")
+    //@PropertyName("image")
     val image: String = "",
 
-    @PropertyName("date")
-    val date: String = ""
-)
+    //@PropertyName("date")
+    val date: String = "",
+
+    var isFavorite: Boolean = false
+):Serializable

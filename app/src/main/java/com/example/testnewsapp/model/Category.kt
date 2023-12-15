@@ -1,6 +1,7 @@
 package com.example.testnewsapp.model
 
 import com.google.firebase.firestore.PropertyName
+import java.io.Serializable
 
 data class Category(
 
@@ -13,4 +14,4 @@ data class Category(
     @PropertyName("image")
     val image: String = ""
 
-)
+): Serializable

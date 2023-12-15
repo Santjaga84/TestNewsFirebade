@@ -2,5 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="lightGrey">#FF938989</color>
+    <color name="default_category_background">#FF938989</color>
+    <color name="selected_category_background">#7CB54B</color> <!-- Красный цвет для выбранной категории -->
+
 </resources>

@@ -4,18 +4,17 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.testnewsapp.model.BlogPost
 import com.example.testnewsapp.model.Category
-import com.example.testnewsapp.repositoriy.FirestoreRepository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class SplashViewModel: ViewModel() {
+
     private val postsLiveData = MutableLiveData<List<BlogPost>>()
     val blogPosts: LiveData<List<BlogPost>> get() = postsLiveData
 
@@ -55,7 +54,6 @@ class SplashViewModel: ViewModel() {
                         categoryLD.add(Category(id = 0, name = "All"))
                     }
 
-
                     for (document in result) {
                         // Преобразование данных из документа в модель данных (BlogPost)
                         val blogPost = document.toObject(BlogPost::class.java)
@@ -81,17 +79,13 @@ class SplashViewModel: ViewModel() {
                     errorLiveData.value =
                         "Ошибка при загрузке данных. Проверьте подключение к интернету."
                 }
-
-
         } else {
             // Если нет интернет-соединения
             isDataLoadedLiveData.value = false // Устанавливаем флаг, что данные не загружены
             errorLiveData.value = "Отсутствует подключение к интернету"
-
         }
     }
 
-    //    Co
     fun Context.isInternetAvailable(): Boolean {
         val connectivityManager =
             ContextCompat.getSystemService(this, ConnectivityManager::class.java)
@@ -106,6 +100,4 @@ class SplashViewModel: ViewModel() {
             return activeNetworkInfo != null && activeNetworkInfo.isConnected
         }
     }
-
-
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +35,7 @@ class MainFragment : Fragment() {
     private lateinit var categoryAdapter: CategoryAdapter
 
     private val viewModel by viewModels<SplashViewModel>()
+
     private val detailsViewModel by viewModels<DetailsViewModel>()
 
 
@@ -76,12 +78,11 @@ class MainFragment : Fragment() {
                     // Наблюдение за изменениями в списке блогов и обновление адаптера
                     viewModel.blogPosts.observe(viewLifecycleOwner) { blogPosts ->
                         modelAdapterBlog.differ.submitList(blogPosts)
-                        Log.d("MyLog", "Number of blog posts in observer: ${blogPosts.size}")
+
                     }
 
                     viewModel.categoryLD.observe(viewLifecycleOwner) { category ->
                         categoryAdapter.differ.submitList(category)
-                        Log.d("MyLog", "Number of category posts in observer: ${category.size}")
 
                     }
 
@@ -102,13 +103,38 @@ class MainFragment : Fragment() {
 
                     modelAdapterBlog.onItemClickListenerBlog = object : OnBlogItemClickListener{
                         override fun onBlogItemClick(blogPost: BlogPost) {
+                            // Вызовите метод навигации к DetailsFragment и передайте данные о выбранной карточке
+
                             detailsViewModel.setSelectedBlogPost(blogPost)
-                            findNavController().navigate(R.id.action_mainFragment_to_detailsFragment)
+                            Log.d("MyLog","кнопка нажата")
+                            findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundleOf("blog" to blogPost))
 
                         }
-                        // Вызовите метод навигации к DetailsFragment и передайте данные о выбранной карточке
-
                     }
+
+//                    modelAdapterBlog.onFavoriteIconClickListener = object : OnFavoriteIconClickListener {
+//                        override fun onFavoriteIconClick(blogPost: BlogPost) {
+//                            // Обработка нажатия на избранное
+//                            blogPost.isFavorite = !blogPost.isFavorite
+//                            // Ваша логика для обновления состояния блога в удаленном источнике
+//
+//                            // Если вам нужно получить обновленный список избранных блогов, то можете вызвать здесь метод
+//                            // detailsViewModel.loadFavoriteBlogPosts() и обновить адаптер в обработчике колбека
+//                            //detailsViewModel.loadFavoriteBlogPosts()
+//                        }
+//                    }
+//                    modelAdapterBlog.onItemClickListenerBlog = object : OnBlogItemClickListener {
+//                        override fun onFavoriteIconClick(blogPost: BlogPost) {
+//                            // Обработка нажатия на избранное
+//                            blogPost.isFavorite = !blogPost.isFavorite
+//                            // Ваша логика для обновления состояния блога в удаленном источнике
+//                            // Можете вызвать здесь метод Firestore или другого удаленного источника для обновления информации о блоге
+//
+//                            // Если вам нужно получить обновленный список избранных блогов, то можете вызвать метод
+//                            // detailsViewModel.loadFavoriteBlogPosts() и обновить адаптер в обработчике колбека
+//                            detailsViewModel.set()
+//                        }
+//                    }
                 }
             }
 

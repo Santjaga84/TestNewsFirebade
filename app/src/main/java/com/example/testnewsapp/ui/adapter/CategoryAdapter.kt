@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -35,16 +36,7 @@ class CategoryAdapter:RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val categoryName = differ.currentList[position]
 
-        holder.itemView.apply {
-            holder.categoryName.text = categoryName.name
-
-            setOnClickListener {
-                // Добавьте логику обработки клика
-
-                onItemClickListenerCategory?.onCategoryItemClick(categoryName)
-            }
-        }
-
+        holder.bind(categoryName)
       }
 
     override fun getItemCount(): Int {
@@ -53,6 +45,28 @@ class CategoryAdapter:RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryName: TextView = itemView.findViewById(R.id.categoryName)
+
+        fun bind(category: Category) {
+            categoryName.text = category.name
+
+            // Устанавливаем цвет текста кнопки в зависимости от выбранной категории
+            val backgroundRes = if (category == selectedCategory) {
+                // Ресурс для выбранной категории
+                R.color.selected_category_background
+            } else {
+                // Ресурс для не выбранной категории
+                R.color.default_category_background
+            }
+            categoryName.setBackgroundResource(backgroundRes)
+
+            itemView.setOnClickListener {
+                // Обрабатываем клик на элементе
+
+                onItemClickListenerCategory?.onCategoryItemClick(category)
+                selectedCategory = category
+                notifyDataSetChanged()
+            }
+        }
       }
     }
     interface OnCategoryItemClickListener {
