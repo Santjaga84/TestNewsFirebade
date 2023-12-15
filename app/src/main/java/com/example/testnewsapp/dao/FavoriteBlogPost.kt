@@ -3,11 +3,12 @@ package com.example.testnewsapp.dao
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.random.Random
 
 @Entity(tableName = "favorite_database")
 data class FavoriteBlogPost(
-    @PrimaryKey (autoGenerate = true)
-    val id: Int?,
+    @PrimaryKey
+    val id: Int = Random.nextInt(),
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo (name = "content")

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,41 +17,49 @@ import com.example.testnewsapp.R
 import com.example.testnewsapp.databinding.FragmentMainBinding
 import com.example.testnewsapp.model.BlogPost
 import com.example.testnewsapp.model.Category
+import com.example.testnewsapp.repositoriy.FavoriteBlogRepository
 import com.example.testnewsapp.ui.adapter.BlogAdapter
 import com.example.testnewsapp.ui.adapter.CategoryAdapter
 import com.example.testnewsapp.ui.adapter.OnBlogItemClickListener
 import com.example.testnewsapp.ui.adapter.OnCategoryItemClickListener
 import com.example.testnewsapp.ui.details.DetailsViewModel
 import com.example.testnewsapp.ui.splash.SplashViewModel
+import kotlinx.coroutines.flow.collect
 
 class MainFragment : Fragment() {
 
     private var binding: FragmentMainBinding? = null
     private val mBinding get() = binding!!
-
     private lateinit var recyclerViewBlog: RecyclerView
     private lateinit var modelAdapterBlog: BlogAdapter
-
     private lateinit var recyclerViewCategory: RecyclerView
     private lateinit var categoryAdapter: CategoryAdapter
-
     private val viewModel by viewModels<SplashViewModel>()
-
-    private val detailsViewModel by viewModels<DetailsViewModel>()
-
-
+    private lateinit var detailsViewModel: DetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
+    ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return mBinding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //что бы засунуть во вью модель данные один из вариатов через фабрику
+        val factory =
+            DetailsViewModelFactory(
+                FavoriteBlogRepository(requireContext())
+            )
+        detailsViewModel =
+            ViewModelProvider(this, factory)[DetailsViewModel::class.java]
+        detailsViewModel.getFavoriteBlogs {
+            activity?.runOnUiThread {
+                // тут я получаю список  проверил все ок
+
+                Log.d("11111", "favorite list - ${it.size}")
+            }
+        }
 
         requireActivity().runOnUiThread {
             recyclerViewBlog = mBinding.rcView

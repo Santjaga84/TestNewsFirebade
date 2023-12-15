@@ -9,12 +9,12 @@ import com.example.testnewsapp.dao.AppDatabase
 import com.example.testnewsapp.dao.FavoriteBlogPost
 import com.example.testnewsapp.model.BlogPost
 import com.example.testnewsapp.repositoriy.FavoriteBlogRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 //private val repository: FavoriteBlogRepository
 class DetailsViewModel(
     private val repository: FavoriteBlogRepository,
-    private val appDatabase: AppDatabase
 ) : ViewModel() {
 
     private val mutableBlogPost = MutableLiveData<BlogPost>()
@@ -23,6 +23,11 @@ class DetailsViewModel(
     private val mutableIsFavorite = MutableLiveData<Boolean>()
     val mutableIsLiveFavorite: LiveData<Boolean> get() = mutableIsFavorite
 
+    fun getFavoriteBlogs(callBack: (List<FavoriteBlogPost>) -> Unit){
+        viewModelScope.launch(Dispatchers.IO) {
+            callBack(repository.getFavoriteBlogs())
+        }
+    }
 
     fun setSelectedBlogPost(blogPost: BlogPost) {
         mutableBlogPost.value = blogPost

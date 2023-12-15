@@ -1,12 +1,15 @@
 package com.example.testnewsapp.repositoriy
 
-import FavoriteBlogPostDao
+import android.content.Context
+import com.example.testnewsapp.dao.AppDatabase
 import com.example.testnewsapp.model.BlogPost
 
-class FavoriteBlogRepository(private val favoriteBlogPostDao: FavoriteBlogPostDao) {
+class FavoriteBlogRepository(context: Context) {
+
+    private val favoriteBlogPostDao by lazy { AppDatabase.getDatabase(context).favoriteBlogPostDao() }
 
     suspend fun addToFavorites(blogPost: BlogPost) {
-        val favoriteBlogPost = BlogPostConverter.toFavoriteBlogPost(blogPost)
+        val favoriteBlogPost = AppDatabase.toFavoriteBlogPost(blogPost)
         favoriteBlogPostDao.insert(favoriteBlogPost)
     }
 
@@ -17,4 +20,6 @@ class FavoriteBlogRepository(private val favoriteBlogPostDao: FavoriteBlogPostDa
     suspend fun isFavorite(blogId: String): Boolean {
         return favoriteBlogPostDao.isFavoriteBlogPost(blogId) != null
     }
+
+    suspend fun getFavoriteBlogs() = favoriteBlogPostDao.getAllFavorite()
 }
